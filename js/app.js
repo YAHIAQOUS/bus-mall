@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 /* eslint-disable indent */
 'use strict';
 
@@ -5,6 +6,9 @@
 let attempts = 10;
 let userAttempCounter = 0;
 let productsArray = [];
+let productsNamesArray = [];
+let votesArray = [];
+let displayArray = [];
 
 let leftImageElement = document.getElementById('leftImage');
 let midImageElement = document.getElementById('midImage');
@@ -21,6 +25,7 @@ function Product(name, image) {
     this.display = 0;
 
     productsArray.push(this);
+    productsNamesArray.push(this.name);
 }
 
 new Product('bag', 'images/bag.jpg');
@@ -44,7 +49,7 @@ new Product('usb', 'images/usb.gif');
 new Product('water-can', 'images/water-can.jpg');
 new Product('wine-glass', 'images/wine-glass.jpg');
 
-console.log(productsArray);
+// console.log(productsArray);
 
 
 
@@ -59,7 +64,7 @@ randomNumber();
 let leftImageIndex;
 let midImageIndex;
 let rightImageIndex;
-
+let tempIndexArray = [];
 
 // Function to render images
 function renderImages() {
@@ -69,12 +74,18 @@ function renderImages() {
 
     console.log('Before while', leftImageIndex, midImageIndex, rightImageIndex);
 
-    while (leftImageIndex === midImageIndex || leftImageIndex === rightImageIndex || midImageIndex === rightImageIndex) {
+    while (leftImageIndex === midImageIndex || leftImageIndex === rightImageIndex || midImageIndex === rightImageIndex || tempIndexArray.includes(leftImageIndex) || tempIndexArray.includes(midImageIndex) || tempIndexArray.includes(rightImageIndex)) {
+        leftImageIndex = randomNumber();
         midImageIndex = randomNumber();
         rightImageIndex = randomNumber();
     }
 
     console.log('After while', leftImageIndex, midImageIndex, rightImageIndex);
+
+
+    tempIndexArray = [];
+    tempIndexArray.push(leftImageIndex, midImageIndex, rightImageIndex);
+
 
     productsArray[leftImageIndex].display++;
     productsArray[midImageIndex].display++;
@@ -95,10 +106,13 @@ let imagesContainer = document.getElementById('imagesContainer');
 // Function for voting by click
 imagesContainer.addEventListener('click', userClick);
 
+
+let resultsButton = document.createElement('button');
+
 function userClick(event) {
     // console.log(event.target.id);
 
-    if (userAttempCounter < attempts-1) {
+    if (userAttempCounter < attempts - 1) {
 
         if (event.target.id === 'leftImage') {
             productsArray[leftImageIndex].votes++;
@@ -114,8 +128,8 @@ function userClick(event) {
             userAttempCounter++;
         }
 
-        console.log(productsArray);
-        console.log(userAttempCounter);
+        // console.log(productsArray);
+        // console.log(userAttempCounter);
 
     } else {
 
@@ -131,7 +145,7 @@ function userClick(event) {
         }
 
         imagesContainer.removeEventListener('click', userClick);
-        let resultsButton = document.createElement('button');
+
         let parent = document.getElementById('results');
         parent.appendChild(resultsButton);
 
@@ -140,21 +154,72 @@ function userClick(event) {
         // from https://codepen.io/davidcochran/pen/WbWXoa
         resultsButton.innerHTML = 'View Results';
 
-        resultsButton.addEventListener('click', renderResults);
-    }
-
-
-    // Function to render list of results
-    function renderResults() {
-        let resultsList = document.createElement('ul');
-        let parent = document.getElementById('results');
-        parent.appendChild(resultsList);
-
 
         for (let i = 0; i < productsArray.length; i++) {
-            let result = document.createElement('li');
-            resultsList.appendChild(result);
-            result.textContent = `${productsArray[i].name} had ${productsArray[i].votes} votes, and was seen ${productsArray[i].display} times`;
+            votesArray.push(productsArray[i].votes);
+            displayArray.push(productsArray[i].display);
         }
+        // console.log(votesArray, displayArray);
+
+
+        resultsButton.addEventListener('click', renderResultsList);
+        resultsButton.addEventListener('click', renderResultsChart);
     }
 }
+
+
+// Function to render list of results
+function renderResultsList() {
+    let resultsList = document.createElement('ul');
+    let parent = document.getElementById('results');
+    parent.appendChild(resultsList);
+
+
+    for (let i = 0; i < productsArray.length; i++) {
+        let result = document.createElement('li');
+        resultsList.appendChild(result);
+        result.textContent = `${productsArray[i].name} had ${productsArray[i].votes} votes, and was seen ${productsArray[i].display} times`;
+    }
+
+    resultsButton.removeEventListener('click', renderResultsList);
+}
+
+
+
+// Function to render chart of results
+
+// from class repo
+function renderResultsChart() {
+    let ctx = document.getElementById('myChart').getContext('2d');
+
+    let chart = new Chart(ctx, {
+        // what type is the chart
+        type: 'bar',
+        //  the data for showing
+        data: {
+            labels: productsNamesArray,
+            datasets:
+                [
+                    {
+                        label: 'Products Votes',
+                        data: votesArray,
+                        backgroundColor: ['rgb(251, 93, 76)',],
+                        borderWidth: 1
+                    },
+
+                    {
+                        label: 'Products Displayed',
+                        data: displayArray,
+                        backgroundColor: ['black',],
+                        borderWidth: 1
+                    }
+                ]
+        },
+        options: {}
+    });
+    resultsButton.removeEventListener('click', renderResultsChart);
+}
+
+
+
+
