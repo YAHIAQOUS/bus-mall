@@ -179,7 +179,8 @@ function storingData() {
 
 
 
-// 
+// function for update products before any votes
+// Great thank for Anolla Haddad for helping
 function updatingData() {
     let stringData = localStorage.getItem('products');
     // console.log(stringData);
@@ -193,7 +194,7 @@ function updatingData() {
     // console.log(productsArray);
 }
 
-updatingData();
+
 
 
 // Function to render list of results
@@ -251,4 +252,4 @@ function renderResultsChart() {
 
 
 
-
+updatingData();
