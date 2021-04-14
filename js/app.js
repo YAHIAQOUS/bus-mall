@@ -16,7 +16,6 @@ let rightImageElement = document.getElementById('rightImage');
 
 // console.log(leftImageElement, midImageElement, rightImageElement);
 
-
 // Function for products
 function Product(name, image) {
     this.name = name;
@@ -72,7 +71,7 @@ function renderImages() {
     midImageIndex = randomNumber();
     rightImageIndex = randomNumber();
 
-    console.log('Before while', leftImageIndex, midImageIndex, rightImageIndex);
+    // console.log('Before while', leftImageIndex, midImageIndex, rightImageIndex);
 
     while (leftImageIndex === midImageIndex || leftImageIndex === rightImageIndex || midImageIndex === rightImageIndex || tempIndexArray.includes(leftImageIndex) || tempIndexArray.includes(midImageIndex) || tempIndexArray.includes(rightImageIndex)) {
         leftImageIndex = randomNumber();
@@ -80,7 +79,7 @@ function renderImages() {
         rightImageIndex = randomNumber();
     }
 
-    console.log('After while', leftImageIndex, midImageIndex, rightImageIndex);
+    // console.log('After while', leftImageIndex, midImageIndex, rightImageIndex);
 
 
     tempIndexArray = [];
@@ -160,12 +159,41 @@ function userClick(event) {
             displayArray.push(productsArray[i].display);
         }
         // console.log(votesArray, displayArray);
-
+ 
+        storingData();
 
         resultsButton.addEventListener('click', renderResultsList);
         resultsButton.addEventListener('click', renderResultsChart);
+
     }
 }
+
+
+
+// Function to store products
+function storingData() {
+    let stringProductsArray = JSON.stringify(productsArray);
+    // console.log(stringVotesArray);
+    localStorage.setItem('products', stringProductsArray);
+}
+
+
+
+// 
+function updatingData() {
+    let stringData = localStorage.getItem('products');
+    // console.log(stringData);
+
+    let dataArray = JSON.parse(stringData);
+    // console.log(dataArray);
+
+    if (dataArray !== null) {
+        productsArray = dataArray;
+    }
+    // console.log(productsArray);
+}
+
+updatingData();
 
 
 // Function to render list of results
@@ -219,6 +247,7 @@ function renderResultsChart() {
     });
     resultsButton.removeEventListener('click', renderResultsChart);
 }
+
 
 
 
