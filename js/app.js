@@ -2,7 +2,7 @@
 'use strict';
 
 
-let attempts = 10;
+let attempts = 25;
 let userAttempCounter = 0;
 let productsArray = [];
 
